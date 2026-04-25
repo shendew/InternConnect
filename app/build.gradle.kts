@@ -42,6 +42,7 @@ dependencies {
     implementation(libs.convertergson)
     implementation(libs.jbcrypt)
     implementation(libs.recyclerview)
+    implementation(libs.cardview)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
