@@ -1,6 +1,7 @@
 package com.kingdew.internconnect.views;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -62,6 +63,8 @@ public class MainActivity extends AppCompatActivity implements OnFilterAppliedLi
             return insets;
         });
 
+        SharedPreferences sp= getSharedPreferences("UserSession",MODE_PRIVATE);
+        String email=sp.getString("userEmail","");
 
         loader = findViewById(R.id.loader);
         ImageView profileImage=findViewById(R.id.prof_img);
@@ -71,6 +74,10 @@ public class MainActivity extends AppCompatActivity implements OnFilterAppliedLi
 
 
         filterBtn=findViewById(R.id.filter_btn);
+
+        if (email.substring(email.indexOf('@')+1).equals("internconnect.com")){
+            addJobBtn.setVisibility(View.VISIBLE);
+        };
 
 
 
