@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements OnFilterAppliedLi
 
         filterBtn=findViewById(R.id.filter_btn);
 
-        if (email.substring(email.indexOf('@')+1).equals("internconnect.com")){
+        if (email.substring(email.indexOf('@')+1).equalsIgnoreCase("internconnect.com")){
             addJobBtn.setVisibility(View.VISIBLE);
         };
 
