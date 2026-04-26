@@ -42,6 +42,9 @@
 4.  **Build and Run:**
     * Click the **Run** icon (Green play button) in the toolbar.
     * Select your target device/emulator.
+5.  **Accounts and Permissions:**
+    * Create account using **@internconnect.com** to access **Add Post, View Posted Jobs** features.
+    * Create account using any email to access common features.
 
 ---
 
