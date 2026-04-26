@@ -6,4 +6,5 @@
     <color name="dark_back">#13131a</color>
     <color name="font_gray">#898989</color>
     <color name="item_back">#1c1c27</color>
+    <color name="item_red">#B82C21</color>
 </resources>

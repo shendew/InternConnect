@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="20dp">
+    android:padding="20dp"
+    style="@style/SCREEN">
 
     <TextView
         android:layout_width="wrap_content"
@@ -11,6 +12,7 @@
         android:text="Filter Jobs"
         android:textSize="20sp"
         android:textStyle="bold"
+        style="@style/TEXT"
         android:layout_marginBottom="15dp"/>
 
 
@@ -18,6 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Paid or non-Paid"
+        style="@style/SUB_TEXT"
         android:layout_marginTop="10dp"/>
 
     <Spinner
@@ -30,6 +33,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Full-time or Part-time"
+        style="@style/SUB_TEXT"
         android:layout_marginTop="10dp"/>
 
     <Spinner
@@ -44,6 +48,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Work Setting"
+        style="@style/SUB_TEXT"
         android:layout_marginTop="10dp"/>
 
     <Spinner
@@ -58,13 +63,14 @@
         android:layout_height="wrap_content"
         android:text="Apply Filters"
         android:layout_marginTop="20dp"
-        android:backgroundTint="@color/design_default_color_primary"/>
+        style="@style/BUTTTON"/>
 
     <Button
         android:id="@+id/btn_reset_filter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Reset"
+        style="@style/ITEM_RED_BUTTON"
         android:backgroundTint="#C52D2D"/>
 
 </LinearLayout>

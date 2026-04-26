@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -35,9 +36,21 @@ import retrofit2.Response;
 public class LoginActivity extends AppCompatActivity {
 
     private Button loginBtn;
+    SharedPreferences.Editor modeEditor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SharedPreferences spMode = getSharedPreferences("Mode", MODE_PRIVATE);
+        boolean isDarkmode = spMode.getBoolean("night", false);
+
+        if (isDarkmode) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            modeEditor=spMode.edit();
+            modeEditor.putBoolean("night",false);
+            modeEditor.apply();
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
 
         SharedPreferences prefs=getSharedPreferences("UserSession",MODE_PRIVATE);
         boolean isLoggedIn = prefs.getBoolean("isLoggedIn",false);

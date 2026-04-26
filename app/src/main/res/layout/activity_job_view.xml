@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/dark_back"
+    style="@style/SCREEN"
     tools:context=".views.JobViewActivity">
 
 
@@ -25,7 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Software Engineer"
-            android:textColor="@color/white"
+            style="@style/TEXT"
             android:textSize="26sp"
             android:textStyle="bold" />
 
@@ -34,20 +34,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="Treinetic"
+            style="@style/TEXT"
             android:textColor="@color/white"
             android:textSize="18sp" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginVertical="16dp"
-            android:background="#33FFFFFF" />
+
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="10dp"
+                app:contentPadding="1dp"
+                app:cardUseCompatPadding="true"
+
+                >
 
             <TextView
                 android:id="@+id/view_work_type"
@@ -56,8 +61,17 @@
                 android:paddingHorizontal="12dp"
                 android:paddingVertical="6dp"
                 android:text="Remote"
-                android:textColor="@color/white" />
+                style="@style/TEXT"/>
+            </androidx.cardview.widget.CardView>
 
+            <androidx.cardview.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="10dp"
+                app:contentPadding="1dp"
+                app:cardUseCompatPadding="true"
+
+                >
             <TextView
                 android:id="@+id/view_paid_status"
                 android:layout_width="wrap_content"
@@ -66,7 +80,18 @@
                 android:paddingHorizontal="12dp"
                 android:paddingVertical="6dp"
                 android:text="Paid"
-                android:textColor="@color/white" />
+                style="@style/TEXT"
+                />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="10dp"
+                app:contentPadding="1dp"
+                app:cardUseCompatPadding="true"
+
+                >
             <TextView
                 android:id="@+id/view_job_type"
                 android:layout_width="wrap_content"
@@ -75,7 +100,10 @@
                 android:paddingHorizontal="12dp"
                 android:paddingVertical="6dp"
                 android:text="Full-Time"
-                android:textColor="@color/white" />
+                style="@style/TEXT"
+                />
+            </androidx.cardview.widget.CardView>
+
         </LinearLayout>
 
         <TextView
@@ -83,7 +111,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:text="Description"
-            android:textColor="@color/white"
+            style="@style/TEXT"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -94,7 +122,7 @@
             android:layout_marginTop="8dp"
             android:lineSpacingExtra="4dp"
             android:text="Join our team in Colombo as a Software Engineer. You will work on cutting-edge mobile and web applications..."
-            android:textColor="#B3FFFFFF" />
+            style="@style/SUB_TEXT"/>
 
         <GridLayout
             android:layout_width="match_parent"
@@ -107,7 +135,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Location:"
-                android:textColor="#80FFFFFF" />
+                style="@style/SUB_TEXT"/>
 
             <TextView
                 android:id="@+id/view_location"
@@ -115,14 +143,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:text="Colombo, Sri Lanka"
-                android:textColor="@color/white" />
+                style="@style/TEXT"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="Deadline:"
-                android:textColor="#80FFFFFF" />
+                style="@style/SUB_TEXT" />
 
             <TextView
                 android:id="@+id/view_due_date"
@@ -131,7 +159,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:text="Apr 30, 2026"
-                android:textColor="@color/white" />
+                style="@style/TEXT" />
         </GridLayout>
 
         <Button
@@ -142,7 +170,8 @@
             android:layout_marginBottom="20dp"
             android:text="Apply via Link"
             android:textAllCaps="true"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            style="@style/BUTTTON"/>
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

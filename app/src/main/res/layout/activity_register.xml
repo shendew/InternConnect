@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/dark_back"
+    style="@style/SCREEN"
     android:orientation="vertical"
     tools:context=".views.RegisterActivity"
     >
@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:text="Welcome"
         android:textAlignment="center"
-        android:textColor="@color/white"
+        style="@style/TEXT"
         android:textSize="28dp"
         android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@+id/reg_app_logo_hold" />
@@ -38,6 +38,7 @@
         android:text="Find your dream internship today"
         android:textAlignment="center"
         android:textStyle="bold"
+        style="@style/SUB_TEXT"
         app:layout_constraintTop_toBottomOf="@+id/reg_header"
         tools:layout_editor_absoluteX="0dp" />
 
@@ -125,6 +126,7 @@
             android:id="@+id/reg_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            style="@style/BUTTTON"
             android:text="Register" />
 
 
@@ -134,8 +136,9 @@
         android:id="@+id/reg_loginbtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="No account? Create one"
+        android:text="Already have an ccount? Login here"
         app:layout_constraintBottom_toBottomOf="parent"
         android:textAlignment="center"
+        style="@style/TEXT"
         android:layout_margin="10dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

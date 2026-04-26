@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements OnFilterAppliedLi
     private Handler searchHandler = new Handler();
     private Runnable searchRunnable;
     private ProgressBar loader;
+    TextInputEditText searchTextField;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements OnFilterAppliedLi
         ImageView profileImage=findViewById(R.id.prof_img);
         jobView =findViewById(R.id.job_rview);
         FloatingActionButton addJobBtn= findViewById(R.id.addJobBtn);
-        TextInputEditText searchTextField = findViewById(R.id.search_input);
+        searchTextField = findViewById(R.id.search_input);
 
 
         filterBtn=findViewById(R.id.filter_btn);
@@ -163,6 +164,7 @@ public class MainActivity extends AppCompatActivity implements OnFilterAppliedLi
         });
     };
     private void performFilter(Boolean isPaid, Boolean isFullTime, Integer workType){
+        searchTextField.setText("");
         loader.setVisibility(View.VISIBLE);
         Map<String,String> data= new HashMap<>();
         if (isPaid!=null){

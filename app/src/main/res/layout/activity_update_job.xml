@@ -6,7 +6,7 @@
         android:id="@+id/main"
         xmlns:tools="http://schemas.android.com/tools"
         tools:context=".views.UpdateJobActivity"
-        android:background="@color/dark_back"
+        style="@style/SCREEN"
         >
 
     <ScrollView
@@ -27,7 +27,8 @@
                 android:textSize="24sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="24dp"
-                android:textAlignment="center"/>
+                android:textAlignment="center"
+                style="@style/TEXT"/>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/job_title_lay"
@@ -158,8 +159,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
                 android:layout_marginBottom="12dp"
-                android:background="@android:drawable/btn_dropdown"
-                android:backgroundTint="@color/item_back"
                 android:spinnerMode="dropdown" />
 
             <TextView
@@ -199,6 +198,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginTop="16dp"
+                style="@style/BUTTTON"
                 android:text="Update Job Posting" />
 
         </LinearLayout>

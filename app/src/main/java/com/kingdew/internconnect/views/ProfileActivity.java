@@ -1,6 +1,7 @@
 package com.kingdew.internconnect.views;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,11 +13,13 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.material.materialswitch.MaterialSwitch;
 import com.kingdew.internconnect.R;
 import com.kingdew.internconnect.api.RetrofitClient;
 import com.kingdew.internconnect.models.User;
@@ -30,7 +33,9 @@ import retrofit2.Response;
 public class ProfileActivity extends AppCompatActivity {
 
     TextView profNameField,profEmailField;
+    MaterialSwitch swDarkMode;
     private ProgressBar progressBar;
+    SharedPreferences.Editor modeEditor;
 
 
     @Override
@@ -48,9 +53,20 @@ public class ProfileActivity extends AppCompatActivity {
 
         profNameField= findViewById(R.id.prof_name);
         profEmailField=findViewById(R.id.prof_email);
+        swDarkMode=findViewById(R.id.sw_dark_mode);
 
         CardView postedJobBtn=findViewById(R.id.prof_postedjobs_btn);
         Button logOutBtn=findViewById(R.id.logout_btn);
+
+        SharedPreferences spMode=getSharedPreferences("Mode", MODE_PRIVATE);
+        Boolean isDarkmode = spMode.getBoolean("night",false);
+
+
+
+        if (isDarkmode){
+            swDarkMode.setChecked(true);
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        }
 
         SharedPreferences sp= getSharedPreferences("UserSession",MODE_PRIVATE);
         String email=sp.getString("userEmail","");
@@ -62,6 +78,19 @@ public class ProfileActivity extends AppCompatActivity {
 
 
 
+
+        swDarkMode.setOnClickListener(v -> {
+            if (isDarkmode){
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                modeEditor=spMode.edit();
+                modeEditor.putBoolean("night",false);
+            }else{
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                modeEditor=spMode.edit();
+                modeEditor.putBoolean("night",true);
+            }
+            modeEditor.apply();
+        });
 
         postedJobBtn.setOnClickListener(view->{
             startActivity(new Intent(ProfileActivity.this,PostedJobsActivity.class));

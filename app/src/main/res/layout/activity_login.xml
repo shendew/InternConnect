@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/dark_back"
+    style="@style/SCREEN"
     android:orientation="vertical"
     tools:context=".views.LoginActivity"
     >
@@ -19,15 +19,15 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_launcher_foreground" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/login_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Welcome Back"
         android:textAlignment="center"
-        android:textColor="@color/white"
         android:textSize="28dp"
         android:textStyle="bold"
+        style="@style/TEXT"
         app:layout_constraintTop_toBottomOf="@+id/login_app_logo_hold" />
 
     <TextView
@@ -38,6 +38,7 @@
         android:text="Find your dream internship today"
         android:textAlignment="center"
         android:textStyle="bold"
+        style="@style/SUB_TEXT"
         app:layout_constraintTop_toBottomOf="@+id/login_header"
         tools:layout_editor_absoluteX="0dp" />
 
@@ -88,11 +89,12 @@
         </com.google.android.material.textfield.TextInputLayout>
 
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/login_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Login" />
+            android:text="Login"
+            style="@style/BUTTTON"/>
 
 
     </LinearLayout>
@@ -104,6 +106,7 @@
         android:text="No account? Create one"
         app:layout_constraintBottom_toBottomOf="parent"
         android:textAlignment="center"
+        style="@style/TEXT"
         android:layout_margin="10dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

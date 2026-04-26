@@ -6,9 +6,9 @@
     android:id="@+id/item_card"
     app:cardUseCompatPadding="true"
     app:contentPadding="15dp"
-    app:strokeColor="@color/item_back"
+    style="@style/ITEM_BACK"
     app:cardElevation="3dp"
-    app:cardBackgroundColor="@color/item_back"
+
     >
 
     <LinearLayout
@@ -21,7 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text=""
-            android:textColor="@color/font_gray"/>
+            style="@style/ITEM_SUB_TEXT"/>
 
 
         <TextView
@@ -32,7 +32,7 @@
             android:maxLines="2"
             android:textStyle="bold"
             android:textSize="24dp"
-            android:textColor="@color/white"/>
+            style="@style/ITEM_TEXT"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -113,14 +113,15 @@
                     android:text=""
                     android:textSize="15sp"
                     android:textStyle="bold"
-                    android:textColor="@color/violoet"/>
+                    style="@style/ITEM_SAL_TEXT"/>
 
                 <TextView
                     android:id="@+id/item_job_date"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text=""
-                    android:textSize="12dp" />
+                    android:textSize="12dp"
+                    style="@style/ITEM_SUB_TEXT"/>
             </LinearLayout>
 
             <Button
@@ -129,6 +130,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Apply"
+                style="@style/BUTTTON"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>

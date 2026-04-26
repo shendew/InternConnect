@@ -6,4 +6,42 @@
     </style>
 
     <style name="Theme.InternConnect" parent="Base.Theme.InternConnect" />
+
+
+<!--    Light Mode-->
+    <style name="SCREEN">
+        <item name="android:background">#FAFAFA</item>
+    </style>
+
+    <style name="TEXT">
+        <item name="android:textColor">#0B0B0B</item>
+    </style>
+
+    <style name="SUB_TEXT">
+        <item name="android:textColor">#595959</item>
+    </style>
+
+    <style name="BUTTTON">
+        <item name="android:backgroundTint">@color/design_default_color_primary</item>
+        <item name="android:textColor">#FFF</item>
+        <item name="cornerRadius">10dp</item>
+    </style>
+
+    <style name="ITEM_BACK">
+        <item name="cardBackgroundColor">#FBFBFB</item>
+    </style>
+    <style name="ITEM_TEXT">
+        <item name="android:textColor">#141414</item>
+    </style>
+    <style name="ITEM_SUB_TEXT">
+        <item name="android:textColor">#686868</item>
+    </style>
+    <style name="ITEM_SAL_TEXT">
+        <item name="android:textColor">@color/violoet</item>
+    </style>
+    <style name="ITEM_RED_BUTTON">
+        <item name="android:backgroundTint">@color/item_red</item>
+        <item name="android:textColor">#FFF</item>
+        <item name="cornerRadius">10dp</item>
+    </style>
 </resources>
