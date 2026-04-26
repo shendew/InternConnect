@@ -137,6 +137,8 @@ public class AddJobActivity extends AppCompatActivity {
 
         btnSave.setOnClickListener(v -> {
             if (validateForm()) {
+                btnSave.setEnabled(false);
+                btnSave.setText("Saving");
                 progressBar.setVisibility(View.VISIBLE);
                 String title = jobTitleField.getText().toString().trim();
                 String company = compNameField.getText().toString().trim();
@@ -159,6 +161,8 @@ public class AddJobActivity extends AppCompatActivity {
                             Toast.makeText(AddJobActivity.this, "Job saved.", Toast.LENGTH_SHORT).show();
                             finish();
                         }else{
+                            btnSave.setEnabled(true);
+                            btnSave.setText("Save Job Posting");
                             Toast.makeText(AddJobActivity.this, "Job saving failed.please try again", Toast.LENGTH_SHORT).show();
 
                         }
@@ -166,6 +170,8 @@ public class AddJobActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Call<Job> call, Throwable t) {
+                        btnSave.setEnabled(true);
+                        btnSave.setText("Save Job Posting");
                         progressBar.setVisibility(View.INVISIBLE);
                         Toast.makeText(AddJobActivity.this, "Something went wrong,please try again later.", Toast.LENGTH_SHORT).show();
 

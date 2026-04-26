@@ -66,7 +66,8 @@ public class ProfileActivity extends AppCompatActivity {
                     .setTitle("Logout")
                     .setMessage("Are you sure you want to logout?")
                     .setPositiveButton("Yes", (dialog, which) -> {
-
+                        logOutBtn.setEnabled(false);
+                        logOutBtn.setText("Logging out");
                         SharedPreferences.Editor editor = sp.edit();
                         editor.clear();
                         editor.apply();
