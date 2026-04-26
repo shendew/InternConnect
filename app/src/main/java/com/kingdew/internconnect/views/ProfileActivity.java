@@ -32,10 +32,14 @@ import retrofit2.Response;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    TextView profNameField,profEmailField;
-    MaterialSwitch swDarkMode;
+    private TextView profNameField,profEmailField;
+    private MaterialSwitch swDarkMode;
     private ProgressBar progressBar;
-    SharedPreferences.Editor modeEditor;
+    private SharedPreferences.Editor modeEditor;
+    private CardView postedJobBtn;
+    private Button logOutBtn;
+    private SharedPreferences spMode,sp;
+    private Boolean isDarkmode;
 
 
     @Override
@@ -49,71 +53,31 @@ public class ProfileActivity extends AppCompatActivity {
             return insets;
         });
 
-        progressBar=findViewById(R.id.loader);
+        initView();
 
-        profNameField= findViewById(R.id.prof_name);
-        profEmailField=findViewById(R.id.prof_email);
-        swDarkMode=findViewById(R.id.sw_dark_mode);
-
-        CardView postedJobBtn=findViewById(R.id.prof_postedjobs_btn);
-        Button logOutBtn=findViewById(R.id.logout_btn);
-
-        SharedPreferences spMode=getSharedPreferences("Mode", MODE_PRIVATE);
-        Boolean isDarkmode = spMode.getBoolean("night",false);
-
-
-
+//        get darkmode data
+        spMode=getSharedPreferences("Mode", MODE_PRIVATE);
+        isDarkmode = spMode.getBoolean("night",false);
         if (isDarkmode){
             swDarkMode.setChecked(true);
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         }
 
-        SharedPreferences sp= getSharedPreferences("UserSession",MODE_PRIVATE);
+//        get session data
+        sp= getSharedPreferences("UserSession",MODE_PRIVATE);
         String email=sp.getString("userEmail","");
 
         if (email.substring(email.indexOf('@')+1).equalsIgnoreCase("internconnect.com")){
             postedJobBtn.setVisibility(View.VISIBLE);
         };
+
         getProfileData(email);
 
 
 
+        initListeners();
 
-        swDarkMode.setOnClickListener(v -> {
-            if (isDarkmode){
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                modeEditor=spMode.edit();
-                modeEditor.putBoolean("night",false);
-            }else{
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                modeEditor=spMode.edit();
-                modeEditor.putBoolean("night",true);
-            }
-            modeEditor.apply();
-        });
 
-        postedJobBtn.setOnClickListener(view->{
-            startActivity(new Intent(ProfileActivity.this,PostedJobsActivity.class));
-        });
-        logOutBtn.setOnClickListener(view->{
-            new AlertDialog.Builder(this)
-                    .setTitle("Logout")
-                    .setMessage("Are you sure you want to logout?")
-                    .setPositiveButton("Yes", (dialog, which) -> {
-                        logOutBtn.setEnabled(false);
-                        logOutBtn.setText("Logging out");
-                        SharedPreferences.Editor editor = sp.edit();
-                        editor.clear();
-                        editor.apply();
-                        Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(intent);
-                        finish();
-                    })
-                    .setNegativeButton("No", null)
-                    .show();
-
-        });
 
     }
 
@@ -139,4 +103,60 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
     }
+    private void initView(){
+        progressBar=findViewById(R.id.loader);
+
+        profNameField= findViewById(R.id.prof_name);
+        profEmailField=findViewById(R.id.prof_email);
+        swDarkMode=findViewById(R.id.sw_dark_mode);
+
+        postedJobBtn=findViewById(R.id.prof_postedjobs_btn);
+        logOutBtn=findViewById(R.id.logout_btn);
+    }
+
+    private void initListeners(){
+        swDarkMode.setOnClickListener(v -> {
+            if (isDarkmode){
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                modeEditor=spMode.edit();
+                modeEditor.putBoolean("night",false);
+            }else{
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                modeEditor=spMode.edit();
+                modeEditor.putBoolean("night",true);
+            }
+            modeEditor.apply();
+        });
+
+        postedJobBtn.setOnClickListener(view->{
+            startActivity(new Intent(ProfileActivity.this,PostedJobsActivity.class));
+        });
+        logOutBtn.setOnClickListener(view->{
+            new AlertDialog.Builder(this)
+                    .setTitle("Logout")
+                    .setMessage("Are you sure you want to logout?")
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        logOutBtn.setEnabled(false);
+                        logOutBtn.setText("Logging out");
+
+                        SharedPreferences.Editor editor = sp.edit();
+                        editor.clear();
+                        editor.apply();
+
+                        modeEditor=spMode.edit();
+                        modeEditor.clear();
+                        modeEditor.apply();
+
+
+                        Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
+                    })
+                    .setNegativeButton("No", null)
+                    .show();
+
+        });
+    }
+
 }

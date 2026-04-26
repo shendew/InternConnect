@@ -39,7 +39,7 @@ import retrofit2.Response;
 
 public class UpdateJobActivity extends AppCompatActivity {
 
-    Date selectedGDate;
+    private Date selectedGDate;
     private TextInputEditText jobTitleField, compNameField, compLocationField, salaryField, applyLinkField, dueDateField,jobDescriptionField;
     private TextInputLayout jobTitleLay, comNameLay, comLocationLay, jobSalaryLay, jobLinkLay, dueDateLay,jobDescLay;
     private Spinner workTypeSpinner;
@@ -49,6 +49,7 @@ public class UpdateJobActivity extends AppCompatActivity {
     private Button btnUpdate;
     private String email;
     private ProgressBar progressBar;
+    private Job job;
 
 
     @Override
@@ -61,12 +62,88 @@ public class UpdateJobActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        Job job =(Job) getIntent().getSerializableExtra("JOB");
+//        get job object form intent
+        job =(Job) getIntent().getSerializableExtra("JOB");
         if (job==null){
             Toast.makeText(this, "Data hasn't passed correctly.", Toast.LENGTH_SHORT).show();
             finish();
         }
 
+        initView();
+
+
+//        setup work type spinner
+        String[] workTypes = {"Onsite", "Remote", "Hybrid"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, workTypes);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        workTypeSpinner.setAdapter(adapter);
+
+        setData(job);
+
+
+        initListeners();
+
+
+
+
+    }
+
+
+
+    private boolean validateForm() {
+        boolean isValid = true;
+
+        // Title validation
+        if (jobTitleField.getText().toString().trim().isEmpty()) {
+            jobTitleLay.setError("Title is required");
+            isValid = false;
+        } else { jobTitleLay.setError(null); }
+
+        // Company Name
+        if (compNameField.getText().toString().trim().isEmpty()) {
+            comNameLay.setError("Company name is required");
+            isValid = false;
+        } else { comNameLay.setError(null); }
+
+        if (compLocationField.getText().toString().trim().isEmpty()){
+            comLocationLay.setError("Location is required");
+            isValid=false;
+        }else {comLocationLay.setError(null);}
+
+        if (jobDescriptionField.getText().toString().trim().isEmpty()){
+            jobDescLay.setError("Description is required");
+            isValid=false;
+        }
+
+        // Salary validation (Only if paid is checked)
+        if (cbIsPaid.isChecked()) {
+            String salary = salaryField.getText().toString().trim();
+            if (salary.isEmpty()) {
+                jobSalaryLay.setError("Salary is required for paid jobs");
+                isValid = false;
+            } else { jobSalaryLay.setError(null); }
+        }
+
+        // URL validation
+        String link = applyLinkField.getText().toString().trim();
+        if (link.isEmpty()) {
+            jobLinkLay.setError("Link is required");
+            isValid = false;
+        } else if (!android.util.Patterns.WEB_URL.matcher(link).matches()) {
+            jobLinkLay.setError("Enter a valid URL");
+            isValid = false;
+        } else { jobLinkLay.setError(null); }
+
+        // Date validation
+        if (selectedGDate == null) {
+            dueDateLay.setError("Select a due date");
+            isValid = false;
+        } else { dueDateLay.setError(null); }
+
+        return isValid;
+    }
+
+    private void initView(){
         jobTitleField = findViewById(R.id.add_job_title);
         compNameField = findViewById(R.id.add_comp_name);
         compLocationField = findViewById(R.id.add_comp_location);
@@ -92,13 +169,9 @@ public class UpdateJobActivity extends AppCompatActivity {
 
 
         progressBar=findViewById(R.id.loader);
+    }
 
-
-        String[] workTypes = {"Onsite", "Remote", "Hybrid"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, workTypes);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        workTypeSpinner.setAdapter(adapter);
-
+    private void setData(Job job){
         jobTitleField.setText(job.getTitle());
         compNameField.setText(job.getCompName());
         compLocationField.setText(job.getCompLocation());
@@ -117,9 +190,35 @@ public class UpdateJobActivity extends AppCompatActivity {
         if (job.isPaid()){
             salaryField.setEnabled(true);
         }
+    }
+    private void updateJobs(Job job, Job newJob) {
+        Call<Job> call= RetrofitClient.getApiService().updateJob(job.getId(),newJob);
+        call.enqueue(new Callback<Job>() {
+            @Override
+            public void onResponse(Call<Job> call, Response<Job> response) {
+                progressBar.setVisibility(View.INVISIBLE);
+                if (response.isSuccessful()){
+                    Toast.makeText(UpdateJobActivity.this, "Job saved.", Toast.LENGTH_SHORT).show();
+                    finish();
+                }else{
+                    btnUpdate.setEnabled(true);
+                    btnUpdate.setText("Update Job Posting");
+                    Toast.makeText(UpdateJobActivity.this, "Job saving failed.please try again", Toast.LENGTH_SHORT).show();
 
+                }
+            }
 
+            @Override
+            public void onFailure(Call<Job> call, Throwable t) {
+                btnUpdate.setEnabled(true);
+                btnUpdate.setText("Update Job Posting");
+                progressBar.setVisibility(View.INVISIBLE);
+                Toast.makeText(UpdateJobActivity.this, "Something went wrong,please try again later.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
+    private void initListeners(){
         dueDateField.setOnClickListener(v -> {
             Calendar calendar=Calendar.getInstance();
             int year = calendar.get(Calendar.YEAR);
@@ -174,88 +273,9 @@ public class UpdateJobActivity extends AppCompatActivity {
 
                 Job newJob= new Job(email,title,company,location,selectedGDate,link,desc,salary,isFullTime,isPaid,workType);
 
-                Call<Job> call= RetrofitClient.getApiService().updateJob(job.getId(),newJob);
-                call.enqueue(new Callback<Job>() {
-                    @Override
-                    public void onResponse(Call<Job> call, Response<Job> response) {
-                        progressBar.setVisibility(View.INVISIBLE);
-                        if (response.isSuccessful()){
-                            Toast.makeText(UpdateJobActivity.this, "Job saved.", Toast.LENGTH_SHORT).show();
-                            finish();
-                        }else{
-                            btnUpdate.setEnabled(true);
-                            btnUpdate.setText("Update Job Posting");
-                            Toast.makeText(UpdateJobActivity.this, "Job saving failed.please try again", Toast.LENGTH_SHORT).show();
-
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<Job> call, Throwable t) {
-                        btnUpdate.setEnabled(true);
-                        btnUpdate.setText("Update Job Posting");
-                        progressBar.setVisibility(View.INVISIBLE);
-                        Toast.makeText(UpdateJobActivity.this, "Something went wrong,please try again later.", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                updateJobs(job,newJob);
 
             }
         });
-
-
-
-    }
-
-    private boolean validateForm() {
-        boolean isValid = true;
-
-        // Title validation
-        if (jobTitleField.getText().toString().trim().isEmpty()) {
-            jobTitleLay.setError("Title is required");
-            isValid = false;
-        } else { jobTitleLay.setError(null); }
-
-        // Company Name
-        if (compNameField.getText().toString().trim().isEmpty()) {
-            comNameLay.setError("Company name is required");
-            isValid = false;
-        } else { comNameLay.setError(null); }
-
-        if (compLocationField.getText().toString().trim().isEmpty()){
-            comLocationLay.setError("Location is required");
-            isValid=false;
-        }else {comLocationLay.setError(null);}
-
-        if (jobDescriptionField.getText().toString().trim().isEmpty()){
-            jobDescLay.setError("Description is required");
-            isValid=false;
-        }
-
-        // Salary validation (Only if paid is checked)
-        if (cbIsPaid.isChecked()) {
-            String salary = salaryField.getText().toString().trim();
-            if (salary.isEmpty()) {
-                jobSalaryLay.setError("Salary is required for paid jobs");
-                isValid = false;
-            } else { jobSalaryLay.setError(null); }
-        }
-
-        // URL validation
-        String link = applyLinkField.getText().toString().trim();
-        if (link.isEmpty()) {
-            jobLinkLay.setError("Link is required");
-            isValid = false;
-        } else if (!android.util.Patterns.WEB_URL.matcher(link).matches()) {
-            jobLinkLay.setError("Enter a valid URL");
-            isValid = false;
-        } else { jobLinkLay.setError(null); }
-
-        // Date validation
-        if (selectedGDate == null) {
-            dueDateLay.setError("Select a due date");
-            isValid = false;
-        } else { dueDateLay.setError(null); }
-
-        return isValid;
     }
 }

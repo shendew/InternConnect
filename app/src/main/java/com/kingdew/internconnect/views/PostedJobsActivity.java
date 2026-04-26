@@ -28,10 +28,10 @@ import retrofit2.Response;
 
 public class PostedJobsActivity extends AppCompatActivity {
 
-    RecyclerView ownerRecView;
-    PostedJobAdapter adapter;
-    ArrayList<Job> jobArrayList;
-    String email;
+    private RecyclerView ownerRecView;
+    private PostedJobAdapter adapter;
+    private ArrayList<Job> jobArrayList;
+    private String email;
     private ProgressBar progressBar;
 
 
@@ -49,10 +49,8 @@ public class PostedJobsActivity extends AppCompatActivity {
         SharedPreferences sp= getSharedPreferences("UserSession",MODE_PRIVATE);
         email=sp.getString("userEmail","");
 
-        progressBar=findViewById(R.id.loader);
-
-
-        ownerRecView=findViewById(R.id.posted_rec_view);
+        initViews();
+//        setup recyclerview
         ownerRecView.setHasFixedSize(true);
         ownerRecView.setLayoutManager(new LinearLayoutManager(this));
         jobArrayList=new ArrayList<>();
@@ -60,7 +58,6 @@ public class PostedJobsActivity extends AppCompatActivity {
         ownerRecView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
-//        getPostedJobs(email);
 
     }
 
@@ -98,4 +95,10 @@ public class PostedJobsActivity extends AppCompatActivity {
         jobArrayList.clear();
         getPostedJobs(email);
     }
+
+    private void initViews(){
+        progressBar=findViewById(R.id.loader);
+        ownerRecView=findViewById(R.id.posted_rec_view);
+    }
+
 }

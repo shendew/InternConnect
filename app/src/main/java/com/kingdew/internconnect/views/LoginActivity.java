@@ -36,13 +36,19 @@ import retrofit2.Response;
 public class LoginActivity extends AppCompatActivity {
 
     private Button loginBtn;
-    SharedPreferences.Editor modeEditor;
+    private SharedPreferences.Editor modeEditor;
+    private TextView loginReg;
+    private TextInputEditText emailField,passField;
+    private TextInputLayout emailLay,passLay;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        get theme details from shared preferences
         SharedPreferences spMode = getSharedPreferences("Mode", MODE_PRIVATE);
         boolean isDarkmode = spMode.getBoolean("night", false);
 
+//        if shared pref stores data, set darkmode or if not add data to share pref
         if (isDarkmode) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         } else {
@@ -52,6 +58,7 @@ public class LoginActivity extends AppCompatActivity {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         }
 
+//        get user session data from shared pref and if isLoggedIn tru navigate to home and finish this activity
         SharedPreferences prefs=getSharedPreferences("UserSession",MODE_PRIVATE);
         boolean isLoggedIn = prefs.getBoolean("isLoggedIn",false);
         if (isLoggedIn){
@@ -68,87 +75,102 @@ public class LoginActivity extends AppCompatActivity {
             return insets;
         });
 
-        TextView loginReg = findViewById(R.id.login_regbtn);
-        loginBtn = findViewById(R.id.login_btn);
-        TextInputEditText emailField =findViewById(R.id.login_email_input);
-        TextInputLayout emailLay =findViewById(R.id.login_email_lay);
-        TextInputEditText passField= findViewById(R.id.login_pass_input);
-        TextInputLayout passLay =findViewById(R.id.login_pass_lay);
 
+        initView(); // Link XML to Java
+        initListners(); //Setup Onclick listnes
+
+
+
+    }
+    private void initView(){
+        loginReg = findViewById(R.id.login_regbtn);
+        emailField =findViewById(R.id.login_email_input);
+        emailLay =findViewById(R.id.login_email_lay);
+        passField= findViewById(R.id.login_pass_input);
+        passLay =findViewById(R.id.login_pass_lay);
+        loginBtn = findViewById(R.id.login_btn);
+    }
+
+    private void initListners(){
         loginBtn.setOnClickListener(v -> {
             String email=emailField.getText().toString().trim();
             String password=passField.getText().toString().trim();
-            boolean isValid = true;
 
-            if (email.isEmpty()){
-                emailLay.setError("Email cannot be empty");
-                isValid=false;
-            }else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
-                emailLay.setError("Invalid email format");
-                isValid=false;
-            }else{
-                emailLay.setError(null);
-            }
-            if (password.isEmpty()){
-                passLay.setError("Password cannot be empty");
-                isValid=false;
-            }else if(password.length()<8){
-                passLay.setError("Password must be at least 8 character long");
-                isValid=false;
-            }else{
-                emailLay.setError(null);
-            }
-
-
-            if (isValid){
+//            validate email and password
+            if (validateInputs(email,password)){
                 loginBtn.setEnabled(false);
                 loginBtn.setText("Logging in...");
-
-                RetrofitClient.getApiService().getAllUsers().enqueue(new Callback<List<User>>() {
-                    @Override
-                    public void onResponse(Call<List<User>> call, Response<List<User>> response) {
-                        if (response.isSuccessful() && response.body() != null){
-                            boolean found = false;
-                            for (User user : response.body()){
-                                if (user.getEmail().toLowerCase().equals(email.toLowerCase()) && BCrypt.checkpw(password,user.getPassword())){
-                                    found = true;
-                                    SharedPreferences sp=getSharedPreferences("UserSession",MODE_PRIVATE);
-                                    SharedPreferences.Editor editor= sp.edit();
-                                    editor.putBoolean("isLoggedIn",true);
-                                    editor.putString("userEmail",email);
-                                    editor.putString("userId",user.getId());
-                                    editor.apply();
-
-                                    startActivity(new Intent(LoginActivity.this,MainActivity.class));
-                                    finish();
-                                }
-                            }
-                            if (!found){
-                                loginBtn.setEnabled(true);
-                                loginBtn.setText("Login");
-                                Toast.makeText(LoginActivity.this, "Credentials are wrong!", Toast.LENGTH_SHORT).show();
-
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<List<User>> call, Throwable t) {
-                        Toast.makeText(LoginActivity.this, "Something went wrong, please try again later.", Toast.LENGTH_SHORT).show();
-                        loginBtn.setEnabled(true);
-                        loginBtn.setText("Login");
-                        if (!call.isCanceled()) {
-                            Toast.makeText(LoginActivity.this, "Network error. Check your connection.", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+                checkLogin(email,password);
             }
-
         });
         loginReg.setOnClickListener(v -> {
             startActivity(new Intent(LoginActivity.this,RegisterActivity.class));
         });
+    }
 
+    private void checkLogin(String email,String password){
+//        call Retrofit getAllUsers to fetch users and find matching one
+        RetrofitClient.getApiService().getAllUsers().enqueue(new Callback<List<User>>() {
+            @Override
+            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                if (response.isSuccessful() && response.body() != null){
+                    boolean found = false;
+                    for (User user : response.body()){
+                        if (user.getEmail().toLowerCase().equals(email.toLowerCase()) && BCrypt.checkpw(password,user.getPassword())){
+                            found = true;
+                            SharedPreferences sp=getSharedPreferences("UserSession",MODE_PRIVATE);
+                            SharedPreferences.Editor editor= sp.edit();
+                            editor.putBoolean("isLoggedIn",true);
+                            editor.putString("userEmail",email);
+                            editor.putString("userId",user.getId());
+                            editor.apply();
 
+                            startActivity(new Intent(LoginActivity.this,MainActivity.class));
+                            finish();
+                        }
+                    }
+                    if (!found){
+                        loginBtn.setEnabled(true);
+                        loginBtn.setText("Login");
+                        Toast.makeText(LoginActivity.this, "Credentials are wrong!", Toast.LENGTH_SHORT).show();
+
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<User>> call, Throwable t) {
+                Toast.makeText(LoginActivity.this, "Something went wrong, please try again later.", Toast.LENGTH_SHORT).show();
+                loginBtn.setEnabled(true);
+                loginBtn.setText("Login");
+                if (!call.isCanceled()) {
+                    Toast.makeText(LoginActivity.this, "Network error. Check your connection.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    private Boolean validateInputs(String email,String password){
+        boolean isValid = true;
+
+        if (email.isEmpty()){
+            emailLay.setError("Email cannot be empty");
+            isValid=false;
+        }else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+            emailLay.setError("Invalid email format");
+            isValid=false;
+        }else{
+            emailLay.setError(null);
+        }
+        if (password.isEmpty()){
+            passLay.setError("Password cannot be empty");
+            isValid=false;
+        }else if(password.length()<8){
+            passLay.setError("Password must be at least 8 character long");
+            isValid=false;
+        }else{
+            emailLay.setError(null);
+        }
+        return isValid;
     }
 }

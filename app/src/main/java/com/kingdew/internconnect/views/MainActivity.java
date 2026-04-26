@@ -45,14 +45,15 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity implements OnFilterAppliedListner {
 
 
-    RecyclerView jobView;
-    ArrayList<Job> jobArrayList;
-    ImageView filterBtn;
-    JobAdapter adapter;
+    private RecyclerView jobView;
+    private ArrayList<Job> jobArrayList;
+    private ImageView filterBtn,profileImage;
+    private JobAdapter adapter;
     private Handler searchHandler = new Handler();
     private Runnable searchRunnable;
     private ProgressBar loader;
-    TextInputEditText searchTextField;
+    private TextInputEditText searchTextField;
+    private FloatingActionButton addJobBtn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,76 +64,27 @@ public class MainActivity extends AppCompatActivity implements OnFilterAppliedLi
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
+//        getE email from shared pref
         SharedPreferences sp= getSharedPreferences("UserSession",MODE_PRIVATE);
         String email=sp.getString("userEmail","");
 
-        loader = findViewById(R.id.loader);
-        ImageView profileImage=findViewById(R.id.prof_img);
-        jobView =findViewById(R.id.job_rview);
-        FloatingActionButton addJobBtn= findViewById(R.id.addJobBtn);
-        searchTextField = findViewById(R.id.search_input);
+        initViews();
 
-
-        filterBtn=findViewById(R.id.filter_btn);
-
+//        give admin access by checking email domain
         if (email.substring(email.indexOf('@')+1).equalsIgnoreCase("internconnect.com")){
             addJobBtn.setVisibility(View.VISIBLE);
         };
 
-
-
+//        setup Recyclerview
         jobView.setLayoutManager(new LinearLayoutManager(this));
         jobView.setHasFixedSize(true);
         jobArrayList=new ArrayList<>();
         adapter=new JobAdapter(this,jobArrayList);
         jobView.setAdapter(adapter);
 
+        initListeners();
 
         loadAllJobs();
-
-        searchTextField.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void afterTextChanged(Editable s) {
-                final String query = s.toString().trim();
-
-                searchRunnable = ()-> {
-                    if (!query.isEmpty()){
-                        performSearch(query);
-                    }else{
-                        loadAllJobs();
-                    }
-                };
-                searchHandler.postDelayed(searchRunnable,500);
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (searchRunnable != null) {
-                    searchHandler.removeCallbacks(searchRunnable);
-                }
-            }
-        });
-
-
-        profileImage.setOnClickListener(v->{
-            startActivity(new Intent(MainActivity.this, ProfileActivity.class));
-        });
-
-        addJobBtn.setOnClickListener(v->{
-            startActivity(new Intent(MainActivity.this, AddJobActivity.class));
-        });
-
-        filterBtn.setOnClickListener(v->{
-            FilterDialogAdapter filterDialogAdapter=new FilterDialogAdapter(MainActivity.this,this);
-            filterDialogAdapter.showFilterDialog();
-        });
-
     }
 
     private void performSearch(String query){
@@ -251,6 +203,58 @@ public class MainActivity extends AppCompatActivity implements OnFilterAppliedLi
     @Override
     public void onFilterSelected(Boolean isPaid, Boolean isFullTime, Integer workType) {
         performFilter(isPaid,isFullTime,workType);
+    }
+
+    private void initViews(){
+        loader = findViewById(R.id.loader);
+        profileImage=findViewById(R.id.prof_img);
+        jobView =findViewById(R.id.job_rview);
+        addJobBtn= findViewById(R.id.addJobBtn);
+        searchTextField = findViewById(R.id.search_input);
+        filterBtn=findViewById(R.id.filter_btn);
+    }
+    private void initListeners(){
+        searchTextField.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable s) {
+                final String query = s.toString().trim();
+
+                searchRunnable = ()-> {
+                    if (!query.isEmpty()){
+                        performSearch(query);
+                    }else{
+                        loadAllJobs();
+                    }
+                };
+                searchHandler.postDelayed(searchRunnable,500);
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (searchRunnable != null) {
+                    searchHandler.removeCallbacks(searchRunnable);
+                }
+            }
+        });
+
+
+        profileImage.setOnClickListener(v->{
+            startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+        });
+
+        addJobBtn.setOnClickListener(v->{
+            startActivity(new Intent(MainActivity.this, AddJobActivity.class));
+        });
+
+        filterBtn.setOnClickListener(v->{
+            FilterDialogAdapter filterDialogAdapter=new FilterDialogAdapter(MainActivity.this,this);
+            filterDialogAdapter.showFilterDialog();
+        });
     }
 
 }

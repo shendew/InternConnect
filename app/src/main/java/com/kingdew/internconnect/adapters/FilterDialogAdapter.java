@@ -15,8 +15,8 @@ import com.kingdew.internconnect.interfaces.OnFilterAppliedListner;
 
 public class FilterDialogAdapter {
 
-    Context context;
-    OnFilterAppliedListner listner;
+    private Context context;
+    private OnFilterAppliedListner listner;
     private AlertDialog dialog;
 
     public FilterDialogAdapter(Context context, OnFilterAppliedListner listner) {

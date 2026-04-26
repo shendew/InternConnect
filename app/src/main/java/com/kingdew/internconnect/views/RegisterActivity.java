@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Patterns;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +33,9 @@ import retrofit2.Response;
 public class RegisterActivity extends AppCompatActivity {
 
     private Button regBtn;
+    private TextView regLogin;
+    private TextInputEditText emailField,passField,repassField,nameField;
+    private TextInputLayout emailLay,passLay,repassLay,nameLay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,97 +47,124 @@ public class RegisterActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        TextView regLogin = findViewById(R.id.reg_loginbtn);
-        regBtn = findViewById(R.id.reg_btn);
-        TextInputEditText emailField =findViewById(R.id.reg_email_input);
-        TextInputLayout emailLay =findViewById(R.id.reg_email_lay);
-        TextInputEditText passField= findViewById(R.id.reg_pass_input);
-        TextInputLayout passLay =findViewById(R.id.reg_pass_lay);
-        TextInputEditText repassField=findViewById(R.id.reg_repass_input);
-        TextInputLayout repassLay=findViewById(R.id.reg_repass_lay);
-        TextInputEditText nameField=findViewById(R.id.reg_name_input);
-        TextInputLayout nameLay=findViewById(R.id.reg_name_lay);
 
+        initViews();
+        initListeners();
+    }
+
+    private void initViews(){
+        regLogin = findViewById(R.id.reg_loginbtn);
+        regBtn = findViewById(R.id.reg_btn);
+        emailField =findViewById(R.id.reg_email_input);
+        emailLay =findViewById(R.id.reg_email_lay);
+        passField= findViewById(R.id.reg_pass_input);
+        passLay =findViewById(R.id.reg_pass_lay);
+        repassField=findViewById(R.id.reg_repass_input);
+        repassLay=findViewById(R.id.reg_repass_lay);
+        nameField=findViewById(R.id.reg_name_input);
+        nameLay=findViewById(R.id.reg_name_lay);
+    }
+    private void registerUser(String name,String email,String password){
+        String hashedPass= BCrypt.hashpw(password,BCrypt.gensalt());
+        User newUser=new User(name,email,hashedPass);
+
+        Call<User> call =RetrofitClient.getApiService().registerUser(newUser);
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful()){
+                    SharedPreferences sp=getSharedPreferences("UserSession",MODE_PRIVATE);
+                    SharedPreferences.Editor editor= sp.edit();
+                    editor.putBoolean("isLoggedIn",true);
+                    editor.putString("userEmail",email);
+                    assert response.body() != null;
+                    editor.putString("userId",response.body().getId());
+
+                    editor.apply();
+
+                    startActivity(new Intent(RegisterActivity.this,MainActivity.class));
+                    finish();
+                }else{
+                    Toast.makeText(RegisterActivity.this, "Registration failed.please try again", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Toast.makeText(RegisterActivity.this, "Something went wrong,please try again later.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    private Boolean validateInputs(String name,String email,String password,String repassword){
+        boolean isValid = true;
+
+        if (name.isEmpty()){
+            nameLay.setError("Name cannot be empty");
+            isValid=false;
+        }
+        if (email.isEmpty()){
+            emailLay.setError("Email cannot be empty");
+            isValid=false;
+        }else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+            emailLay.setError("Invalid email format");
+            isValid=false;
+        }else{
+            emailLay.setError(null);
+        }
+
+
+        if (password.isEmpty()){
+            passLay.setError("Password cannot be empty");
+            isValid=false;
+        }else if(!repassword.equals(password)){
+            repassLay.setError("Re-Password is not matching");
+            isValid=false;
+        }else if(password.length()<8){
+            passLay.setError("Password must be at least 8 character long");
+            isValid=false;
+        }else{
+            emailLay.setError(null);
+        }
+        return isValid;
+    }
+
+    private void initListeners(){
         regBtn.setOnClickListener(v -> {
             String name=nameField.getText().toString().trim();
             String email=emailField.getText().toString().trim();
             String password=passField.getText().toString().trim();
             String repassword=repassField.getText().toString().trim();
-            boolean isValid = true;
 
-            if (name.isEmpty()){
-                nameLay.setError("Name cannot be empty");
-                isValid=false;
-            }
-            if (email.isEmpty()){
-                emailLay.setError("Email cannot be empty");
-                isValid=false;
-            }else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
-                emailLay.setError("Invalid email format");
-                isValid=false;
-            }else{
-                emailLay.setError(null);
-            }
-
-
-            if (password.isEmpty()){
-                passLay.setError("Password cannot be empty");
-                isValid=false;
-            }else if(!repassword.equals(password)){
-                repassLay.setError("Re-Password is not matching");
-                isValid=false;
-            }else if(password.length()<8){
-                passLay.setError("Password must be at least 8 character long");
-                isValid=false;
-            }else{
-                emailLay.setError(null);
-            }
-
-
-            if (isValid){
+            if (validateInputs(name,email,password,repassword)){
                 regBtn.setEnabled(false);
                 regBtn.setText("Sign in...");
-                String hashedPass= BCrypt.hashpw(password,BCrypt.gensalt());
-
-
-
-                User newUser=new User(name,email,hashedPass);
-
-                Call<User> call =RetrofitClient.getApiService().registerUser(newUser);
-
-                call.enqueue(new Callback<User>() {
-                    @Override
-                    public void onResponse(Call<User> call, Response<User> response) {
-                        if (response.isSuccessful()){
-                            SharedPreferences sp=getSharedPreferences("UserSession",MODE_PRIVATE);
-                            SharedPreferences.Editor editor= sp.edit();
-                            editor.putBoolean("isLoggedIn",true);
-                            editor.putString("userEmail",email);
-                            assert response.body() != null;
-                            editor.putString("userId",response.body().getId());
-
-                            editor.apply();
-
-                            startActivity(new Intent(RegisterActivity.this,MainActivity.class));
-                            finish();
-                        }else{
-                            Toast.makeText(RegisterActivity.this, "Registration failed.please try again", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<User> call, Throwable t) {
-                        Toast.makeText(RegisterActivity.this, "Something went wrong,please try again later.", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
+                checkUserAvailability(name,email,password);
             }
 
         });
         regLogin.setOnClickListener(v -> {
             startActivity(new Intent(RegisterActivity.this,LoginActivity.class));
         });
+    }
 
+    private void checkUserAvailability(String name,String email,String password) {
+        RetrofitClient.getApiService().searchUser(email).enqueue(new Callback<List<User>>() {
+            @Override
+            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                if (response.isSuccessful() && response.body() != null){
+                    Toast.makeText(RegisterActivity.this, "Email has already registered", Toast.LENGTH_SHORT).show();
 
+                } else if (response.body() == null) {
+                    registerUser(name,email,password);
+                } else {
+                    Toast.makeText(RegisterActivity.this, "Server error:"+response.code(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<User>> call, Throwable t) {
+                Toast.makeText(RegisterActivity.this, "Something went wrong,please try again later", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

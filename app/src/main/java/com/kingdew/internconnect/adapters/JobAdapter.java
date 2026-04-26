@@ -28,14 +28,12 @@ import java.util.Locale;
 
 public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
 
-    Context context;
-    ArrayList<Job> jobList;
-    ArrayList<Job> filteredList;
+    private Context context;
+    private ArrayList<Job> jobList;
 
     public JobAdapter(Context contect, ArrayList<Job> jobList) {
         this.context = contect;
         this.jobList = jobList;
-        this.filteredList=jobList;
     }
 
     @NonNull

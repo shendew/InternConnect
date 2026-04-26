@@ -29,8 +29,8 @@ import retrofit2.Response;
 
 public class PostedJobAdapter extends RecyclerView.Adapter<PostedJobAdapter.ViewHolder> {
 
-    Context context;
-    ArrayList<Job> jobList;
+    private Context context;
+    private ArrayList<Job> jobList;
 
     public PostedJobAdapter(Context context, ArrayList<Job> jobList) {
         this.context = context;

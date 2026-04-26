@@ -22,12 +22,11 @@ import java.util.Locale;
 public class JobViewActivity extends AppCompatActivity {
     private TextView titleField, companyField, workTypeField, paidField, descField, locationField, dateField,jobTypeField;
     private Button applyBtn;
+    private Job job;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_job_view);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -35,25 +34,14 @@ public class JobViewActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        titleField = findViewById(R.id.view_job_title);
-        companyField = findViewById(R.id.view_comp_name);
-        workTypeField = findViewById(R.id.view_work_type);
-        paidField = findViewById(R.id.view_paid_status);
-        descField = findViewById(R.id.view_description);
-        locationField = findViewById(R.id.view_location);
-        dateField = findViewById(R.id.view_due_date);
-        jobTypeField=findViewById(R.id.view_job_type);
-        applyBtn = findViewById(R.id.btn_apply_now);
+        initView();
 
-        Job job =(Job) getIntent().getSerializableExtra("JOB");
+//        get intent data
+        job =(Job) getIntent().getSerializableExtra("JOB");
         if (job!=null){
             displayJobDetails(job);
         }
-        applyBtn.setOnClickListener(v->{
-            if (!job.getApplyLink().startsWith("http://") && !job.getApplyLink().startsWith("https://"))
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://"+job.getApplyLink())));
-
-        });
+        initListeners();
     }
     private void displayJobDetails(Job job) {
         titleField.setText(job.getTitle());
@@ -72,5 +60,24 @@ public class JobViewActivity extends AppCompatActivity {
         
         jobTypeField.setText(job.isType()?"Full-Time":"Part-Time");
         
+    }
+    private void initView(){
+        titleField = findViewById(R.id.view_job_title);
+        companyField = findViewById(R.id.view_comp_name);
+        workTypeField = findViewById(R.id.view_work_type);
+        paidField = findViewById(R.id.view_paid_status);
+        descField = findViewById(R.id.view_description);
+        locationField = findViewById(R.id.view_location);
+        dateField = findViewById(R.id.view_due_date);
+        jobTypeField=findViewById(R.id.view_job_type);
+        applyBtn = findViewById(R.id.btn_apply_now);
+    }
+
+    private void initListeners(){
+        applyBtn.setOnClickListener(v->{
+            if (!job.getApplyLink().startsWith("http://") && !job.getApplyLink().startsWith("https://"))
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://"+job.getApplyLink())));
+
+        });
     }
 }

@@ -42,7 +42,7 @@ import retrofit2.Response;
 
 public class AddJobActivity extends AppCompatActivity {
 
-    Date selectedGDate;
+    private Date selectedGDate;
     private TextInputEditText jobTitleField, compNameField, compLocationField, salaryField, applyLinkField, dueDateField,jobDescriptionField;
     private TextInputLayout jobTitleLay, comNameLay, comLocationLay, jobSalaryLay, jobLinkLay, dueDateLay,jobDescLay;
     private Spinner workTypeSpinner;
@@ -68,118 +68,16 @@ public class AddJobActivity extends AppCompatActivity {
         SharedPreferences sp= getSharedPreferences("UserSession",MODE_PRIVATE);
         email=sp.getString("userEmail","");
 
-        jobTitleField = findViewById(R.id.add_job_title);
-        compNameField = findViewById(R.id.add_comp_name);
-        compLocationField = findViewById(R.id.add_comp_location);
-        salaryField = findViewById(R.id.add_salary);
-        applyLinkField = findViewById(R.id.add_apply_link);
-        dueDateField = findViewById(R.id.add_due_date);
-        jobDescriptionField=findViewById(R.id.add_job_description);
+        initViews();
 
-
-        workTypeSpinner = findViewById(R.id.add_work_type_spinner);
-        rgJobType = findViewById(R.id.rg_job_type);
-        rbFullTime = findViewById(R.id.rb_full_time);
-        cbIsPaid = findViewById(R.id.cb_is_paid);
-        btnSave = findViewById(R.id.btn_save_job);
-
-        jobTitleLay = findViewById(R.id.job_title_lay);
-        comNameLay = findViewById(R.id.com_name_lay);
-        comLocationLay = findViewById(R.id.com_location_name);
-        jobSalaryLay = findViewById(R.id.job_salary_lay);
-        jobLinkLay = findViewById(R.id.job_link_lay);
-        dueDateLay = findViewById(R.id.due_date_lay);
-        jobDescLay=findViewById(R.id.add_job_description_lay);
-
-        progressBar=findViewById(R.id.loader);
-
-
+//        setupt work type spinner
         String[] workTypes = {"Onsite", "Remote", "Hybrid"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, workTypes);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         workTypeSpinner.setAdapter(adapter);
 
-        dueDateField.setOnClickListener(v -> {
-            Calendar calendar=Calendar.getInstance();
-            int year = calendar.get(Calendar.YEAR);
-            int month = calendar.get(Calendar.MONTH);
-            int day = calendar.get(Calendar.DATE);
+        initListeners();
 
-            DatePickerDialog dialog=new DatePickerDialog(AddJobActivity.this, new DatePickerDialog.OnDateSetListener() {
-                @Override
-                public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                    Calendar selectedDate = Calendar.getInstance();
-                    selectedDate.set(year, month, dayOfMonth);
-
-                    SimpleDateFormat displayFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                    String formattedDisplay = displayFormat.format(selectedDate.getTime());
-                    dueDateField.setText(formattedDisplay);
-
-                    SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
-                    isoFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-                    String dateForDb = isoFormat.format(selectedDate.getTime());
-                    selectedGDate=new Date(selectedDate.getTime().toString());
-
-                }
-            },year,month,day);
-            dialog.show();
-        });
-        cbIsPaid.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(@NonNull CompoundButton buttonView, boolean isChecked) {
-                jobSalaryLay.setEnabled(isChecked);
-                if (!isChecked) {
-                    salaryField.setText("0");
-                    jobSalaryLay.setError(null);
-                }
-            }
-        });
-
-        btnSave.setOnClickListener(v -> {
-            if (validateForm()) {
-                btnSave.setEnabled(false);
-                btnSave.setText("Saving");
-                progressBar.setVisibility(View.VISIBLE);
-                String title = jobTitleField.getText().toString().trim();
-                String company = compNameField.getText().toString().trim();
-                String location = compLocationField.getText().toString().trim();
-                String desc=jobDescriptionField.getText().toString().trim();
-                String link=applyLinkField.getText().toString().trim();
-                double salary = cbIsPaid.isChecked() ? Double.parseDouble(salaryField.getText().toString()) : 0.0;
-                int workType = workTypeSpinner.getSelectedItemPosition(); // 0, 1, 2
-                boolean isFullTime = rbFullTime.isChecked();
-                boolean isPaid = cbIsPaid.isChecked();
-
-                Job newJob= new Job(email,title,company,location,selectedGDate,link,desc,salary,isFullTime,isPaid,workType);
-
-                Call<Job> call= RetrofitClient.getApiService().addJob(newJob);
-                call.enqueue(new Callback<Job>() {
-                    @Override
-                    public void onResponse(Call<Job> call, Response<Job> response) {
-                        progressBar.setVisibility(View.INVISIBLE);
-                        if (response.isSuccessful()){
-                            Toast.makeText(AddJobActivity.this, "Job saved.", Toast.LENGTH_SHORT).show();
-                            finish();
-                        }else{
-                            btnSave.setEnabled(true);
-                            btnSave.setText("Save Job Posting");
-                            Toast.makeText(AddJobActivity.this, "Job saving failed.please try again", Toast.LENGTH_SHORT).show();
-
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<Job> call, Throwable t) {
-                        btnSave.setEnabled(true);
-                        btnSave.setText("Save Job Posting");
-                        progressBar.setVisibility(View.INVISIBLE);
-                        Toast.makeText(AddJobActivity.this, "Something went wrong,please try again later.", Toast.LENGTH_SHORT).show();
-
-                    }
-                });
-
-            }
-        });
     }
 
     private boolean validateForm() {
@@ -233,5 +131,116 @@ public class AddJobActivity extends AppCompatActivity {
         } else { dueDateLay.setError(null); }
 
         return isValid;
+    }
+
+    private void saveJobs(Job newJob){
+        Call<Job> call= RetrofitClient.getApiService().addJob(newJob);
+        call.enqueue(new Callback<Job>() {
+            @Override
+            public void onResponse(Call<Job> call, Response<Job> response) {
+                progressBar.setVisibility(View.INVISIBLE);
+                if (response.isSuccessful()){
+                    Toast.makeText(AddJobActivity.this, "Job saved.", Toast.LENGTH_SHORT).show();
+                    finish();
+                }else{
+                    btnSave.setEnabled(true);
+                    btnSave.setText("Save Job Posting");
+                    Toast.makeText(AddJobActivity.this, "Job saving failed.please try again", Toast.LENGTH_SHORT).show();
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Job> call, Throwable t) {
+                btnSave.setEnabled(true);
+                btnSave.setText("Save Job Posting");
+                progressBar.setVisibility(View.INVISIBLE);
+                Toast.makeText(AddJobActivity.this, "Something went wrong,please try again later.", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+    }
+    private void initViews(){
+        jobTitleField = findViewById(R.id.add_job_title);
+        compNameField = findViewById(R.id.add_comp_name);
+        compLocationField = findViewById(R.id.add_comp_location);
+        salaryField = findViewById(R.id.add_salary);
+        applyLinkField = findViewById(R.id.add_apply_link);
+        dueDateField = findViewById(R.id.add_due_date);
+        jobDescriptionField=findViewById(R.id.add_job_description);
+
+
+        workTypeSpinner = findViewById(R.id.add_work_type_spinner);
+        rgJobType = findViewById(R.id.rg_job_type);
+        rbFullTime = findViewById(R.id.rb_full_time);
+        cbIsPaid = findViewById(R.id.cb_is_paid);
+        btnSave = findViewById(R.id.btn_save_job);
+
+        jobTitleLay = findViewById(R.id.job_title_lay);
+        comNameLay = findViewById(R.id.com_name_lay);
+        comLocationLay = findViewById(R.id.com_location_name);
+        jobSalaryLay = findViewById(R.id.job_salary_lay);
+        jobLinkLay = findViewById(R.id.job_link_lay);
+        dueDateLay = findViewById(R.id.due_date_lay);
+        jobDescLay=findViewById(R.id.add_job_description_lay);
+
+        progressBar=findViewById(R.id.loader);
+    }
+    private void initListeners(){
+        dueDateField.setOnClickListener(v -> {
+            Calendar calendar=Calendar.getInstance();
+            int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONTH);
+            int day = calendar.get(Calendar.DATE);
+
+            DatePickerDialog dialog=new DatePickerDialog(AddJobActivity.this, new DatePickerDialog.OnDateSetListener() {
+                @Override
+                public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                    Calendar selectedDate = Calendar.getInstance();
+                    selectedDate.set(year, month, dayOfMonth);
+
+                    SimpleDateFormat displayFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                    String formattedDisplay = displayFormat.format(selectedDate.getTime());
+                    dueDateField.setText(formattedDisplay);
+
+                    SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
+                    isoFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+                    String dateForDb = isoFormat.format(selectedDate.getTime());
+                    selectedGDate=new Date(selectedDate.getTime().toString());
+
+                }
+            },year,month,day);
+            dialog.show();
+        });
+        cbIsPaid.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(@NonNull CompoundButton buttonView, boolean isChecked) {
+                jobSalaryLay.setEnabled(isChecked);
+                if (!isChecked) {
+                    salaryField.setText("0");
+                    jobSalaryLay.setError(null);
+                }
+            }
+        });
+
+        btnSave.setOnClickListener(v -> {
+            if (validateForm()) {
+                btnSave.setEnabled(false);
+                btnSave.setText("Saving");
+                progressBar.setVisibility(View.VISIBLE);
+                String title = jobTitleField.getText().toString().trim();
+                String company = compNameField.getText().toString().trim();
+                String location = compLocationField.getText().toString().trim();
+                String desc=jobDescriptionField.getText().toString().trim();
+                String link=applyLinkField.getText().toString().trim();
+                double salary = cbIsPaid.isChecked() ? Double.parseDouble(salaryField.getText().toString()) : 0.0;
+                int workType = workTypeSpinner.getSelectedItemPosition(); // 0, 1, 2
+                boolean isFullTime = rbFullTime.isChecked();
+                boolean isPaid = cbIsPaid.isChecked();
+
+                Job newJob= new Job(email,title,company,location,selectedGDate,link,desc,salary,isFullTime,isPaid,workType);
+                saveJobs(newJob);
+            }
+        });
     }
 }
