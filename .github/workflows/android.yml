@@ -1,0 +1,43 @@
+name: Android Build and Auto-Push
+
+on:
+  push:
+    branches:
+      - main  # Change this to your default branch name
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      with:
+        # Crucial for pushing back to the repo
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Set up JDK
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17' # Use the version matching your project
+        distribution: 'temurin'
+        cache: 'gradle'
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Build with Gradle
+      run: ./gradlew assembleDebug
+
+    - name: Commit and Push on Success
+      if: success()
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        
+        # Example: Updating a build-log or timestamp to trigger a push
+        echo "Last successful build: $(date)" > build_status.txt
+        
+        git add build_status.txt
+        git commit -m "chore: update build status [skip ci]"
+        git push
