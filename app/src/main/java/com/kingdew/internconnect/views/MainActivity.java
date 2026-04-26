@@ -6,12 +6,16 @@ import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -22,25 +26,31 @@ import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.kingdew.internconnect.R;
+import com.kingdew.internconnect.adapters.FilterDialogAdapter;
 import com.kingdew.internconnect.adapters.JobAdapter;
 import com.kingdew.internconnect.api.RetrofitClient;
+import com.kingdew.internconnect.interfaces.OnFilterAppliedListner;
 import com.kingdew.internconnect.models.Job;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnFilterAppliedListner {
 
 
     RecyclerView jobView;
     ArrayList<Job> jobArrayList;
+    ImageView filterBtn;
     JobAdapter adapter;
     private Handler searchHandler = new Handler();
     private Runnable searchRunnable;
+    private ProgressBar loader;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,11 +63,14 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
+        loader = findViewById(R.id.loader);
         ImageView profileImage=findViewById(R.id.prof_img);
         jobView =findViewById(R.id.job_rview);
         FloatingActionButton addJobBtn= findViewById(R.id.addJobBtn);
         TextInputEditText searchTextField = findViewById(R.id.search_input);
+
+
+        filterBtn=findViewById(R.id.filter_btn);
 
 
 
@@ -107,12 +120,19 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(MainActivity.this, AddJobActivity.class));
         });
 
+        filterBtn.setOnClickListener(v->{
+            FilterDialogAdapter filterDialogAdapter=new FilterDialogAdapter(MainActivity.this,this);
+            filterDialogAdapter.showFilterDialog();
+        });
+
     }
 
     private void performSearch(String query){
+        loader.setVisibility(View.VISIBLE);
         RetrofitClient.getApiService().searchJobs(query).enqueue(new Callback<List<Job>>() {
             @Override
             public void onResponse(Call<List<Job>> call, Response<List<Job>> response) {
+                loader.setVisibility(View.INVISIBLE);
                 if (response.isSuccessful() && response.body() != null){
                     jobArrayList.clear();
                     jobArrayList.addAll(response.body());
@@ -130,16 +150,64 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<Job>> call, Throwable t) {
+                loader.setVisibility(View.INVISIBLE);
                 Toast.makeText(MainActivity.this, "Something went wrong, please try again."+t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     };
+    private void performFilter(Boolean isPaid, Boolean isFullTime, Integer workType){
+        loader.setVisibility(View.VISIBLE);
+        Map<String,String> data= new HashMap<>();
+        if (isPaid!=null){
+            data.put("paid", String.valueOf(isPaid));
+        }
+        if (isFullTime!=null){
+            data.put("type", String.valueOf(isFullTime));
+        }
+        if (workType!=null){
+            data.put("work_type", String.valueOf(workType));
+        }
+        if (isPaid==null && isFullTime==null && workType==null){
+            loadAllJobs();
+        }else{
+            RetrofitClient.getApiService().filterJobs(data).enqueue(new Callback<List<Job>>() {
+                @Override
+                public void onResponse(Call<List<Job>> call, Response<List<Job>> response) {
+                    loader.setVisibility(View.INVISIBLE);
+                    if (response.isSuccessful() && response.body() != null){
+                        filterBtn.setImageDrawable( AppCompatResources.getDrawable(MainActivity.this,R.drawable.filter_true));
+                        jobArrayList.clear();
+                        jobArrayList.addAll(response.body());
+                        adapter.notifyDataSetChanged();
+                    } else if (response.body() == null){
+                        jobArrayList.clear();
+                        adapter.notifyDataSetChanged();
 
+                        Toast.makeText(MainActivity.this, "No jobs found", Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(MainActivity.this, "Server error :"+response.code(), Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+
+                @Override
+                public void onFailure(Call<List<Job>> call, Throwable t) {
+                    loader.setVisibility(View.INVISIBLE);
+                    Toast.makeText(MainActivity.this, "Something went wrong, please try again."+t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+    };
     protected void loadAllJobs(){
+        loader.setVisibility(View.VISIBLE);
         RetrofitClient.getApiService().getAllJobs().enqueue(new Callback<List<Job>>() {
             @Override
             public void onResponse(Call<List<Job>> call, Response<List<Job>> response) {
+                loader.setVisibility(View.INVISIBLE);
                 if (response.isSuccessful() && response.body() != null){
+                    filterBtn.setImageDrawable( AppCompatResources.getDrawable(MainActivity.this,R.drawable.filter_none));
+
                     jobArrayList.clear();
                     jobArrayList.addAll(response.body());
                     adapter.notifyDataSetChanged();
@@ -150,6 +218,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<Job>> call, Throwable t) {
+                loader.setVisibility(View.INVISIBLE);
                 Toast.makeText(MainActivity.this, "Something went wrong, please try again."+t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -163,4 +232,16 @@ public class MainActivity extends AppCompatActivity {
             searchHandler.removeCallbacks(searchRunnable);
         }
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadAllJobs();
+    }
+
+    @Override
+    public void onFilterSelected(Boolean isPaid, Boolean isFullTime, Integer workType) {
+        performFilter(isPaid,isFullTime,workType);
+    }
+
 }

@@ -1,9 +1,6 @@
 package com.kingdew.internconnect.views;
 
-import static android.view.View.VISIBLE;
-
 import android.app.DatePickerDialog;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -40,7 +37,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class AddJobActivity extends AppCompatActivity {
+public class UpdateJobActivity extends AppCompatActivity {
 
     Date selectedGDate;
     private TextInputEditText jobTitleField, compNameField, compLocationField, salaryField, applyLinkField, dueDateField,jobDescriptionField;
@@ -49,7 +46,7 @@ public class AddJobActivity extends AppCompatActivity {
     private RadioGroup rgJobType;
     private RadioButton rbFullTime;
     private CheckBox cbIsPaid;
-    private Button btnSave;
+    private Button btnUpdate;
     private String email;
     private ProgressBar progressBar;
 
@@ -58,15 +55,17 @@ public class AddJobActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_add_job);
+        setContentView(R.layout.activity_update_job);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
-        SharedPreferences sp= getSharedPreferences("UserSession",MODE_PRIVATE);
-        email=sp.getString("userEmail","");
+        Job job =(Job) getIntent().getSerializableExtra("JOB");
+        if (job==null){
+            Toast.makeText(this, "Data hasn't passed correctly.", Toast.LENGTH_SHORT).show();
+            finish();
+        }
 
         jobTitleField = findViewById(R.id.add_job_title);
         compNameField = findViewById(R.id.add_comp_name);
@@ -81,7 +80,7 @@ public class AddJobActivity extends AppCompatActivity {
         rgJobType = findViewById(R.id.rg_job_type);
         rbFullTime = findViewById(R.id.rb_full_time);
         cbIsPaid = findViewById(R.id.cb_is_paid);
-        btnSave = findViewById(R.id.btn_save_job);
+        btnUpdate = findViewById(R.id.btn_update_job);
 
         jobTitleLay = findViewById(R.id.job_title_lay);
         comNameLay = findViewById(R.id.com_name_lay);
@@ -91,6 +90,7 @@ public class AddJobActivity extends AppCompatActivity {
         dueDateLay = findViewById(R.id.due_date_lay);
         jobDescLay=findViewById(R.id.add_job_description_lay);
 
+
         progressBar=findViewById(R.id.loader);
 
 
@@ -99,13 +99,34 @@ public class AddJobActivity extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         workTypeSpinner.setAdapter(adapter);
 
+        jobTitleField.setText(job.getTitle());
+        compNameField.setText(job.getCompName());
+        compLocationField.setText(job.getCompLocation());
+        salaryField.setText(String.valueOf(job.getSalary()));
+        applyLinkField.setText(job.getApplyLink());
+        jobDescriptionField.setText(job.getJobDescription());
+        SimpleDateFormat displayFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String formattedDisplay = displayFormat.format(job.getDueDate().getTime());
+        dueDateField.setText(formattedDisplay);
+
+        rbFullTime.setSelected(job.isType());
+        workTypeSpinner.setSelection(job.getWorkType());
+        workTypeSpinner.setSelection(job.getWorkType());
+        selectedGDate=new Date(job.getDueDate().toString());
+        cbIsPaid.setChecked(job.isPaid());
+        if (job.isPaid()){
+            salaryField.setEnabled(true);
+        }
+
+
+
         dueDateField.setOnClickListener(v -> {
             Calendar calendar=Calendar.getInstance();
             int year = calendar.get(Calendar.YEAR);
             int month = calendar.get(Calendar.MONTH);
             int day = calendar.get(Calendar.DATE);
 
-            DatePickerDialog dialog=new DatePickerDialog(AddJobActivity.this, new DatePickerDialog.OnDateSetListener() {
+            DatePickerDialog dialog=new DatePickerDialog(UpdateJobActivity.this, new DatePickerDialog.OnDateSetListener() {
                 @Override
                 public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                     Calendar selectedDate = Calendar.getInstance();
@@ -135,9 +156,10 @@ public class AddJobActivity extends AppCompatActivity {
             }
         });
 
-        btnSave.setOnClickListener(v -> {
+        btnUpdate.setOnClickListener(v -> {
             if (validateForm()) {
                 progressBar.setVisibility(View.VISIBLE);
+
                 String title = jobTitleField.getText().toString().trim();
                 String company = compNameField.getText().toString().trim();
                 String location = compLocationField.getText().toString().trim();
@@ -150,16 +172,16 @@ public class AddJobActivity extends AppCompatActivity {
 
                 Job newJob= new Job(email,title,company,location,selectedGDate,link,desc,salary,isFullTime,isPaid,workType);
 
-                Call<Job> call= RetrofitClient.getApiService().addJob(newJob);
+                Call<Job> call= RetrofitClient.getApiService().updateJob(job.getId(),newJob);
                 call.enqueue(new Callback<Job>() {
                     @Override
                     public void onResponse(Call<Job> call, Response<Job> response) {
                         progressBar.setVisibility(View.INVISIBLE);
                         if (response.isSuccessful()){
-                            Toast.makeText(AddJobActivity.this, "Job saved.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(UpdateJobActivity.this, "Job saved.", Toast.LENGTH_SHORT).show();
                             finish();
                         }else{
-                            Toast.makeText(AddJobActivity.this, "Job saving failed.please try again", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(UpdateJobActivity.this, "Job saving failed.please try again", Toast.LENGTH_SHORT).show();
 
                         }
                     }
@@ -167,13 +189,15 @@ public class AddJobActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(Call<Job> call, Throwable t) {
                         progressBar.setVisibility(View.INVISIBLE);
-                        Toast.makeText(AddJobActivity.this, "Something went wrong,please try again later.", Toast.LENGTH_SHORT).show();
-
+                        Toast.makeText(UpdateJobActivity.this, "Something went wrong,please try again later.", Toast.LENGTH_SHORT).show();
                     }
                 });
 
             }
         });
+
+
+
     }
 
     private boolean validateForm() {

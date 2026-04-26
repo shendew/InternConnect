@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:layout_marginBottom="20dp"
-            android:text="TextView"
+            android:text=""
             android:textAlignment="center"
             android:textSize="24dp"
             android:textStyle="bold" />
@@ -41,9 +41,9 @@
             android:id="@+id/prof_postedjobs_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp"
             android:layout_marginBottom="15dp"
             app:cardUseCompatPadding="true"
+            app:cardElevation="2dp"
             app:contentPadding="15dp">
 
             <LinearLayout
@@ -97,7 +97,7 @@
                     android:id="@+id/prof_email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="test@gmail.com"
+                    android:text=""
                     android:textStyle="bold" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -119,6 +119,16 @@
             android:textColor="@color/white" />
 
     </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/loader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,9 +1,10 @@
 package com.kingdew.internconnect.models;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Job {
+public class Job implements Serializable {
         @SerializedName("id")
         private String id;
 
@@ -28,6 +29,8 @@ public class Job {
         @SerializedName("apply_link")
         private String applyLink;
 
+        @SerializedName("job_description")
+        private String jobDescription;
         @SerializedName("salary")
         private double salary;
 
@@ -43,32 +46,21 @@ public class Job {
         // Default Constructor
         public Job() {}
 
-        public Job(String title, String compName, String compLocation, Date dueDate, String applyLink, double salary, boolean type, boolean paid, int workType) {
-                this.title = title;
-                this.compName = compName;
-                this.compLocation = compLocation;
-                this.dueDate = dueDate;
-                this.applyLink = applyLink;
-                this.salary = salary;
-                this.type = type;
-                this.paid = paid;
-                this.workType = workType;
-        }
 
-        public Job(String addedBy, String title, String compName, String compLocation, Date dueDate, String applyLink, double salary, boolean type, boolean paid, int workType) {
+        public Job(String addedBy, String title, String compName, String compLocation, Date dueDate, String applyLink, String jobDescription, double salary, boolean type, boolean paid, int workType) {
                 this.addedBy = addedBy;
                 this.title = title;
                 this.compName = compName;
                 this.compLocation = compLocation;
                 this.dueDate = dueDate;
                 this.applyLink = applyLink;
+                this.jobDescription = jobDescription;
                 this.salary = salary;
                 this.type = type;
                 this.paid = paid;
                 this.workType = workType;
         }
 
-        // Getters and Setters
         public String getId() {
                 return id;
         }
@@ -83,6 +75,14 @@ public class Job {
 
         public void setCreatedAt(String createdAt) {
                 this.createdAt = createdAt;
+        }
+
+        public String getAddedBy() {
+                return addedBy;
+        }
+
+        public void setAddedBy(String addedBy) {
+                this.addedBy = addedBy;
         }
 
         public String getTitle() {
@@ -125,11 +125,19 @@ public class Job {
                 this.applyLink = applyLink;
         }
 
+        public String getJobDescription() {
+                return jobDescription;
+        }
+
+        public void setJobDescription(String jobDescription) {
+                this.jobDescription = jobDescription;
+        }
+
         public double getSalary() {
                 return salary;
         }
 
-        public void setSalary(Float salary) {
+        public void setSalary(double salary) {
                 this.salary = salary;
         }
 

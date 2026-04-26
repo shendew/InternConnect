@@ -50,11 +50,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/reg_subheader">
 
-        <TextView
-            android:id="@+id/reg_name_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Name" />
+
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/reg_name_lay"
@@ -66,15 +62,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:hint="jhondoe"
+                android:hint="Name"
                 android:inputType="text" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <TextView
-            android:id="@+id/reg_email_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Email" />
+
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/reg_email_lay"
@@ -86,21 +78,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:hint="goedoe@gmail.com"
+                android:hint="Email"
                 android:inputType="textEmailAddress" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <TextView
-            android:id="@+id/reg_pass_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Password" />
+
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/reg_pass_lay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="25dp"
             app:passwordToggleEnabled="true">
 
 
@@ -109,7 +96,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-
                 android:hint="Password"
 
                 android:inputType="textPassword" />

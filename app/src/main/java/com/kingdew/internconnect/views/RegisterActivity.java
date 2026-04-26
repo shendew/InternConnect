@@ -93,7 +93,7 @@ public class RegisterActivity extends AppCompatActivity {
             if (isValid){
                 regBtn.setEnabled(false);
                 regBtn.setText("Sign in...");
-                String hashedPass= BCrypt.hashpw(password,"intern");
+                String hashedPass= BCrypt.hashpw(password,BCrypt.gensalt());
 
 
 
@@ -109,6 +109,9 @@ public class RegisterActivity extends AppCompatActivity {
                             SharedPreferences.Editor editor= sp.edit();
                             editor.putBoolean("isLoggedIn",true);
                             editor.putString("userEmail",email);
+                            assert response.body() != null;
+                            editor.putString("userId",response.body().getId());
+
                             editor.apply();
 
                             startActivity(new Intent(RegisterActivity.this,MainActivity.class));

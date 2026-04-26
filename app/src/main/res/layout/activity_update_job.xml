@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/main"
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:context=".views.UpdateJobActivity"
+        android:background="@color/dark_back"
+        >
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Update Job"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="24dp"
+                android:textAlignment="center"/>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/job_title_lay"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                >
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/add_job_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Job Title"
+                    android:inputType="textCapWords" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2"
+                android:layout_marginBottom="12dp"
+                >
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/com_name_lay"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginRight="10dp"
+                    >
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/add_comp_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Company Name" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/com_location_name"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    >
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/add_comp_location"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Location" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/add_job_description_lay"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/add_job_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Describe the role..."
+                android:inputType="textMultiLine|textCapSentences"
+                android:gravity="top"
+                android:minLines="5" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/job_salary_lay"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                >
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/add_salary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Salary"
+                    android:text="0"
+                    android:enabled="false"
+                    android:inputType="numberDecimal" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/job_link_lay"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                >
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/add_apply_link"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Apply Link (URL)"
+                    android:inputType="textUri" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/due_date_lay"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                >
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/add_due_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Due Date"
+                    android:inputType="date"
+                    android:focusable="false"
+                    android:clickable="true" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Work Type"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="4dp"/>
+            <Spinner
+                android:id="@+id/add_work_type_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginBottom="12dp"
+                android:background="@android:drawable/btn_dropdown"
+                android:backgroundTint="@color/item_back"
+                android:spinnerMode="dropdown" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Employment Type"
+                android:layout_marginTop="8dp"/>
+            <RadioGroup
+                android:id="@+id/rg_job_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+                <RadioButton
+                    android:id="@+id/rb_full_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Full-time"
+                    android:checked="true" />
+                <RadioButton
+                    android:id="@+id/rb_part_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="Part-time" />
+            </RadioGroup>
+
+            <CheckBox
+                android:id="@+id/cb_is_paid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Paid Position"
+                android:layout_marginBottom="16dp" />
+
+            <Button
+                android:id="@+id/btn_update_job"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="16dp"
+                android:text="Update Job Posting" />
+
+        </LinearLayout>
+    </ScrollView>
+    <ProgressBar
+    android:id="@+id/loader"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:visibility="gone"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+

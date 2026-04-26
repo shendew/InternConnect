@@ -9,6 +9,7 @@
 
     android:background="@color/dark_back">
 
+
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
@@ -53,19 +54,48 @@
 
     </LinearLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/search_lay"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/top_lay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
+        android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/search_input"
-            android:layout_width="match_parent"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/search_lay"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="Type here" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_weight="1"
+            android:padding="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/filter_btn"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/search_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Type here" />
+
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <ImageView
+            android:id="@+id/filter_btn"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/filter_none"
+            android:text="filter"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 
 
@@ -77,7 +107,7 @@
         app:layout_constraintEnd_toEndOf="parent"
 
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/search_lay"
+        app:layout_constraintTop_toBottomOf="@+id/top_lay"
         tools:listitem="@layout/job_item" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -88,6 +118,16 @@
         android:clickable="true"
         android:src="@android:drawable/ic_input_add"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/loader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
 

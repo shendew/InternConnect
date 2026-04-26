@@ -97,14 +97,13 @@ public class LoginActivity extends AppCompatActivity {
                         if (response.isSuccessful() && response.body() != null){
                             boolean found = false;
                             for (User user : response.body()){
-                                if (user.getEmail().equalsIgnoreCase(email) && BCrypt.checkpw(password,user.getPassword())){
+                                if (user.getEmail().toLowerCase().equals(email.toLowerCase()) && BCrypt.checkpw(password,user.getPassword())){
                                     found = true;
-                                    Toast.makeText(LoginActivity.this, "Credentials are correct.", Toast.LENGTH_SHORT).show();
-
                                     SharedPreferences sp=getSharedPreferences("UserSession",MODE_PRIVATE);
                                     SharedPreferences.Editor editor= sp.edit();
                                     editor.putBoolean("isLoggedIn",true);
                                     editor.putString("userEmail",email);
+                                    editor.putString("userId",user.getId());
                                     editor.apply();
 
                                     startActivity(new Intent(LoginActivity.this,MainActivity.class));

@@ -4,8 +4,11 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +30,8 @@ import retrofit2.Response;
 public class ProfileActivity extends AppCompatActivity {
 
     TextView profNameField,profEmailField;
+    private ProgressBar progressBar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +44,8 @@ public class ProfileActivity extends AppCompatActivity {
             return insets;
         });
 
+        progressBar=findViewById(R.id.loader);
+
         profNameField= findViewById(R.id.prof_name);
         profEmailField=findViewById(R.id.prof_email);
 
@@ -46,7 +53,7 @@ public class ProfileActivity extends AppCompatActivity {
         Button logOutBtn=findViewById(R.id.logout_btn);
 
         SharedPreferences sp= getSharedPreferences("UserSession",MODE_PRIVATE);
-        String email=sp.getString("email","");
+        String email=sp.getString("userEmail","");
 
         getProfileData(email);
 
@@ -76,19 +83,24 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void getProfileData(String email) {
+        progressBar.setVisibility(View.VISIBLE);
         RetrofitClient.getApiService().searchUser(email).enqueue(new Callback<List<User>>() {
             @Override
             public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                progressBar.setVisibility(View.INVISIBLE);
                 if (response.isSuccessful() && response.body() != null){
                     User user=response.body().get(0);
                     profEmailField.setText(user.getEmail());
                     profNameField.setText(user.getName());
+                }else {
+                    Toast.makeText(ProfileActivity.this, "Server error:"+response.code(), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<List<User>> call, Throwable t) {
-
+                progressBar.setVisibility(View.INVISIBLE);
+                Toast.makeText(ProfileActivity.this, "Something went wrong,please try again later", Toast.LENGTH_SHORT).show();
             }
         });
     }
