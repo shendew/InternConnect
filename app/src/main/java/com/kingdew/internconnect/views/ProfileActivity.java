@@ -55,7 +55,12 @@ public class ProfileActivity extends AppCompatActivity {
         SharedPreferences sp= getSharedPreferences("UserSession",MODE_PRIVATE);
         String email=sp.getString("userEmail","");
 
+        if (email.substring(email.indexOf('@')+1).equalsIgnoreCase("internconnect.com")){
+            postedJobBtn.setVisibility(View.VISIBLE);
+        };
         getProfileData(email);
+
+
 
 
         postedJobBtn.setOnClickListener(view->{
